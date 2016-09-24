@@ -1,14 +1,7 @@
-X9SD DLDI Driver
-Hardware driver to facilitate SD card access for Ninjapass X9
+/*
+io_x9sd.h
 
--
-
-changes:
-
-09/23/2016
-coto: fixed proper DLDI support for most if not all LIBNDS homebrew, everything I have tried works
-
--
+Hardware routines for interfacing with SD cards on a Ninjapass X9
 
 Copyright (C) 2007 by CJ Bell
 siegebell at gmail dot com
@@ -30,3 +23,20 @@ freely, subject to the following restrictions:
 
  3. This notice may not be removed or altered from any source distribution.
 
+*/
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern bool _X9SD_isInserted(void);
+extern bool _X9SD_clearStatus (void);
+extern bool _X9SD_shutdown(void);
+extern bool _X9SD_startup(void);
+extern bool _X9SD_writeSectors(uint32 sector, uint32 sectors, const uint8* buffer);
+extern bool _X9SD_readSectors(uint32 sector, uint32 sectorCount, uint8* buffer);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
