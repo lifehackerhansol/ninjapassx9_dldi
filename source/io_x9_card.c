@@ -57,29 +57,47 @@ static void memcpy(uint8* dest, uint8 const* src, int size)
 }
 */
 
-//coto: dma.. lets see how well/bad it does
-void dmamemcpy(uint8* dest, uint8 const* src, int size)
+//coto: nds dma copies when possible
+inline void dmamemcpy(uint8* dest, uint8 const* src, int size)
 {
-	if((size % 4) ==0){
-		//dmaCopyWords (uint8 channel, const void *src, void *dest, uint32 size)
-		dmaCopyWords (0, src, dest, size);
+	//prevent invalid copies
+	if(size <= 0){
+		return;
 	}
-	else if((size % 2) ==0){
+	
+	if((size % 4) == 0){
+		
+		//dmaCopyWords (uint8 channel, const void *src, void *dest, uint32 size)
+		dmaCopyWords (3, src, dest, size);
+	}
+	else if((size % 2) == 0){
+		
 		//dmaCopyHalfWords (uint8 channel, const void *src, void *dest, uint32 size)
-		dmaCopyHalfWords (0, src, dest, size);
+		dmaCopyHalfWords (3, src, dest, size);
 	}
 	else{
-		while(size--) 
-		*dest++ = *src++;
+		
+		while(size--) {
+			*dest++ = *src++;
+		}
 	}
 }
 
 
 void cardWriteCommand(const uint8* command)
 {
-	//ori
-    //CARD_CR1H = CARD_CR1_ENABLE | CARD_CR1_IRQ;
-	REG_AUXSPICNTH = CARD_CR1_ENABLE | CARD_CR1_IRQ;
+	
+	while(REG_ROMCTRL & CARD_BUSY){	
+		if(REG_ROMCTRL & CARD_DATA_READY){
+			break;
+		}
+	}
+	
+	
+	//enable only if disabled previously
+	if(!(REG_AUXSPICNTH & CARD_CR1_ENABLE)){
+		REG_AUXSPICNTH = CARD_CR1_ENABLE | CARD_CR1_IRQ;
+	}
 	
 	int index;
 	for (index = 0; index < 8; index++) {
@@ -122,16 +140,13 @@ void cardPolledTransfer(uint32 flags, uint32* dest,uint32 length, const uint8* c
 void X9CardPolledWrite(uint32 flags, const uint32* buffer, const uint8* command)
 {
     cardWriteCommand(command);
-    //ori:CARD_CR2 = flags;
-	REG_ROMCTRL = flags;
+    REG_ROMCTRL = flags;
     do
     {
-        //if(CARD_CR2 & CARD_DATA_READY)
         if(REG_ROMCTRL & CARD_DATA_READY)
 		CARD_DATA_RD = *buffer++;
 		
     } 
-	//while(CARD_CR2 & CARD_BUSY);
 	while(REG_ROMCTRL & CARD_BUSY);
 }
 

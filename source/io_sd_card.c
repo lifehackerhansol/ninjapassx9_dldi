@@ -117,8 +117,14 @@ void SDSendCommand(enum SDCommand sdCmd, uint32 arg, uint8* response)
     }
 }
 
+//coto: added proper retry-ability @ bool _X9SD_writeSectors
 bool SDWriteSingleBlock(uint32 address, const void* buffer)
 {
+	//retry IF cart irq programatically!
+	if(REG_IF & IRQ_CARD){
+		REG_IF = IRQ_CARD;
+	}
+	
     // Preemptively send the data before issuing the command so
     // that the X9 can compute the CRC
     X9CardWriteData(0, 0, buffer);
@@ -131,30 +137,54 @@ bool SDWriteSingleBlock(uint32 address, const void* buffer)
     // Overwrites scratch
     X9CardIO(0x63, 0, 0, 0xB15863FA, (uint32*)scratch, 0x80);
 
-    // TODO: Timeout
-    int idx;
-    do
-    {
-        // Repeat SD command to get data?
-        X9CardIO(0x62, 0, 0, 0xA1586000, (uint32*)scratch, 0x80);
-
-        for(idx = 0; idx < 0x200 && (scratch[idx] & 0x10); ++idx)
-            ;
-
-    } while(idx == 0x200);
-
-
-    // TODO: TIMEOUT
-    do
-    {
-        // Repeat SD command?
-        X9CardIO(0x62, 0, 0, 0xA1586000, (uint32*)scratch, 0x80);
-
-        for(idx = 0; idx < 0x200 && !(scratch[idx] & 0x10); ++idx)
-            ;
-
-    } while(idx == 0x200);
-
+    int idx = 0;
+    
+	//coto: loop until buffer is available for sending
+	while(true)
+	{
+		if(idx == 0){
+			// Repeat SD command to absorb current data
+			X9CardIO(0x62, 0, 0, 0xA1586000, (uint32*)scratch, 0x80);
+		}
+		
+		if((idx < 0x200) && !(scratch[idx] & 0x10)){
+			break;
+		}
+		
+		
+		if(idx < 0x200){
+			idx++;
+		}
+		else{
+			idx = 0;
+			return false;	//retry later
+		}
+	}
+	
+	idx = 0;
+	
+	//coto: loop until buffer is available for sending
+	while(true)
+	{
+		if(idx == 0){
+			// Repeat SD command?
+			X9CardIO(0x62, 0, 0, 0xA1586000, (uint32*)scratch, 0x80);
+		}
+		
+		if((idx < 0x200) && (scratch[idx] & 0x10)){
+			break;
+		}
+		
+		
+		if(idx < 0x200){
+			idx++;
+		}
+		else{
+			idx = 0;
+			return false;	//retry later
+		}
+	}
+	
     return true;
 
 }
@@ -162,6 +192,10 @@ bool SDWriteSingleBlock(uint32 address, const void* buffer)
 
 bool SDReadSingleBlock(uint32 address, void* destination)
 {
+	if(REG_IF & IRQ_CARD){
+		REG_IF = IRQ_CARD;
+	}
+	
     // scratch is split in two halves
 
     // 0x60: send an SD command

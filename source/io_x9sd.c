@@ -156,11 +156,11 @@ bool _X9SD_writeSectors(uint32 sector, uint32 sectorCount, const uint8* buffer)
     const uint32 blockLength = 512;
     while(sectorCount > 0)
     {
-        SDWriteSingleBlock(sector*blockLength, buffer);
-
-        buffer+= blockLength;
-        --sectorCount;
-        ++sector;
+        if(SDWriteSingleBlock(sector*blockLength, buffer) == true){
+			buffer+= blockLength;
+			--sectorCount;
+			++sector;
+		}
     }
     
     return true;
