@@ -44,13 +44,14 @@ static uint8 scratch[0x1000];
 //#define DO_DEBUG(statements) do { statements; } while(0)               
 //#define DO_DEBUG(statements)
 
+#define min2(a, b) ((a) < (b) ? (a) : (b))
+
 
 void SDSendCommand(enum SDCommand sdCmd, uint32 arg, uint8* response)
 {
     // Each byte in var represents one bit -- bit 0 of var[x]. Thus, each group
     // of eight bytes in var is "effectively" one byte from the SD card
     // 
-	
 	
     static uint8 var[0x200];
     // Send the SD command (0x60)
@@ -68,8 +69,8 @@ void SDSendCommand(enum SDCommand sdCmd, uint32 arg, uint8* response)
     int end = 0;
     while(true)
     {
-        if(!(var[effectiveBit] & 1))
-        {// start-bit
+        if(!(var[effectiveBit] & 1)){
+			// start-bit
             // Start at the byte found
             start = effectiveBit;
             // Use 256 bytes of var to construct 32 effective bytes
@@ -79,8 +80,8 @@ void SDSendCommand(enum SDCommand sdCmd, uint32 arg, uint8* response)
 
         ++effectiveBit;
 
-        if(effectiveBit >= 0x200)
-        {// Hit the end of the search without success 
+        if(effectiveBit >= 0x200){
+			// Hit the end of the search without success 
             // Skip the start-bit
             start = 1; //(var[effectiveBit-1] ^ 1) & 1; <-- known because of previous if-statement
             // Use 255 bytes of var to construct 31+7/8 effective bytes
@@ -89,12 +90,12 @@ void SDSendCommand(enum SDCommand sdCmd, uint32 arg, uint8* response)
         }
     }
 
-
     // Covert 256 bytes of var into 32 bytes using the low-bits
     // This doesn't care what sd_cs_data is initially because each entry will
     // be shifted 8 bits.
-    if((int)start < (int)end)
-    {
+    
+	if(min2(start, end) == start)
+	{
         const uint8* end_ptr = &(var[end]);
         uint8* ptr = &(var[start]);
 
@@ -120,11 +121,6 @@ void SDSendCommand(enum SDCommand sdCmd, uint32 arg, uint8* response)
 //coto: added proper retry-ability @ bool _X9SD_writeSectors
 bool SDWriteSingleBlock(uint32 address, const void* buffer)
 {
-	//retry IF cart irq programatically!
-	if(REG_IF & IRQ_CARD){
-		REG_IF = IRQ_CARD;
-	}
-	
     // Preemptively send the data before issuing the command so
     // that the X9 can compute the CRC
     X9CardWriteData(0, 0, buffer);
@@ -192,9 +188,6 @@ bool SDWriteSingleBlock(uint32 address, const void* buffer)
 
 bool SDReadSingleBlock(uint32 address, void* destination)
 {
-	if(REG_IF & IRQ_CARD){
-		REG_IF = IRQ_CARD;
-	}
 	
     // scratch is split in two halves
 
@@ -205,8 +198,7 @@ bool SDReadSingleBlock(uint32 address, void* destination)
 
     // Search for the start of data
     unsigned int k = 0;
-    for(k = 0; k < 0x200 && (scratch[k] & 0xf0); ++k)
-        ;
+    for(k = 0; k < 0x200 && (scratch[k] & 0xf0); ++k);
 
     // Continue searching
     while(k == 0x200)

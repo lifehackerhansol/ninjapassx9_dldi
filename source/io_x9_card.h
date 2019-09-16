@@ -25,21 +25,76 @@ freely, subject to the following restrictions:
 
 */
 
-#ifndef INCLUDED_io_x9_card_h
-#define INCLUDED_io_x9_card_h
+#ifndef _io_x9_card_h__
+#define _io_x9_card_h__
+
+// Shared data just to save space
+static uint32 x9Buffer[0x200];
+static uint8  x9Command[8];
+
+static inline __attribute__((always_inline)) void X9CardIO(uint8 cmd, uint8 arg1, uint32 arg2, uint32 flags, uint32* buffer, uint32 words)
+{
+    x9Command[7] = cmd;
+    x9Command[6] = (arg2>>24)&0xFF;
+    x9Command[5] = (arg2>>16)&0xFF;
+    x9Command[4] = (arg2>>8)&0xFF;
+    x9Command[3] = (arg2)&0xFF;
+    x9Command[2] = 0;
+    x9Command[1] = 0;
+    x9Command[0] = arg1;
+
+    cardPolledTransfer(flags, buffer, words, x9Command);
+}
+
+
+static inline __attribute__((always_inline)) void cardIO_1()
+{
+    x9Command[7] = 0x58;
+    x9Command[6] = 0;
+    x9Command[5] = 0;
+    x9Command[4] = 0;
+    x9Command[3] = 0;
+    x9Command[2] = 0;
+    x9Command[1] = 2;
+    x9Command[0] = 0;
+
+    cardPolledTransfer(0xA0586000, x9Buffer, 0, x9Command);
+}
+
+static inline __attribute__((always_inline)) void cardIO_2(uint32 arg)
+{
+    X9CardIO(0x5D, 0, arg, 0xA0586000, x9Buffer, 0);
+}
+
+static inline __attribute__((always_inline)) void cardIO_3(uint8 arg0)
+{
+    x9Command[7] = 0x58;
+    x9Command[6] = 0;
+    x9Command[5] = 0;
+    x9Command[4] = 0;
+    x9Command[3] = 0;
+    x9Command[2] = 0;
+    x9Command[1] = 2 | arg0;
+    x9Command[0] = 0;
+
+    // uses 512 bytes of x9Buffer
+    cardPolledTransfer(0xA0586000, x9Buffer, 0, x9Command);
+}
+
+static inline __attribute__((always_inline)) void cardIO_4(uint32 address)
+{
+    X9CardIO(0x5C, 0, address, 0xA0586000, x9Buffer, 0);
+}
+
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-extern void dmamemcpy(uint8* dest, uint8 const* src, int size);
 //extern void X9CardPolledWrite(uint32 flags, const uint32* buffer, const uint8* command);
 extern void X9CardIO(uint8 cmd, uint8 arg1, uint32 arg2, uint32 flags, uint32* buffer, uint32 words);
 extern void X9CardWriteData(uint8 arg1, uint32 arg2, const void* buffer);
-extern void cardIO_1();
-extern void cardIO_2(uint32 arg);
-extern void cardIO_3(uint8 arg0);
-extern void cardIO_4(uint32 address);
+extern void cardPolledTransfer(uint32 flags, uint32* dest,uint32 length, const uint8* command);
 
 #ifdef __cplusplus
 }

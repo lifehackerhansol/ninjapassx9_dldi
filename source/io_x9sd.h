@@ -37,6 +37,8 @@ extern bool _X9SD_startup(void);
 extern bool _X9SD_writeSectors(uint32 sector, uint32 sectors, const uint8* buffer);
 extern bool _X9SD_readSectors(uint32 sector, uint32 sectorCount, uint8* buffer);
 
+extern void *armmemcpy(void *dest, const void *src, size_t n);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

@@ -16,7 +16,7 @@ include $(DEVKITARM)/ds_rules
 # INCLUDES is a list of directories containing header files
 # SPECS is the directory containing the important build and link files
 #---------------------------------------------------------------------------------
-export TARGET		:=	$(shell basename $(CURDIR))
+export TARGET	:=	$(shell basename $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
@@ -33,7 +33,7 @@ CFLAGS	:=	-g -Wall -O2\
 			-ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9 -fPIC
+CFLAGS	+=	$(INCLUDE)	-DARM9	-fPIC	
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
