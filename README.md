@@ -3,7 +3,14 @@ Hardware driver to facilitate SD card access for Ninjapass X9
 
 -
 
-changes:
+Changes:
+
+16/09/2019
+
+- remove DMA dependency, use a faster ARM memcpy. Improves stability.
+- a bit faster performing writes to SD / less resource intensive
+- fix/remove warnings
+
 
 09/23/2016
 coto: fixed proper DLDI support for most if not all LIBNDS homebrew, everything I have tried works
