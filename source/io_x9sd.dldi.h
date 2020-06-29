@@ -1,5 +1,5 @@
 /*
-io_x9sd.h
+io_x9sd.dldi.h
 
 Hardware routines for interfacing with SD cards on a Ninjapass X9
 
@@ -37,7 +37,7 @@ extern bool _X9SD_startup(void);
 extern bool _X9SD_writeSectors(uint32 sector, uint32 sectors, const uint8* buffer);
 extern bool _X9SD_readSectors(uint32 sector, uint32 sectorCount, uint8* buffer);
 
-extern void *armmemcpy(void *dest, const void *src, size_t n);
+extern void *armmemcpy(void *dest, const void *src, int n);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -19,8 +19,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
-@void *armmemcpy          ( void *dest, const void *src, size_t n);
+@void *armmemcpy          ( void *dest, const void *src, int n);
 
+.section .text
 .align 4
 .global armmemcpy
 .arm

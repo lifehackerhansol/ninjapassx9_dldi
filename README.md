@@ -1,6 +1,13 @@
 X9SD DLDI Driver
 Hardware driver to facilitate SD card access for Ninjapass X9
 
+
+Building:
+
+Compile with dkARM r43: Makefile_dkarm (rename it to Makefile) -> make clean -> make
+
+Compile with TGDS 1.5: Makefile -> make clean -> make
+
 -
 
 Changes:

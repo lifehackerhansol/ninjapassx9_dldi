@@ -30,18 +30,11 @@ freely, subject to the following restrictions:
 
 //#include <stdio.h>
 //#include <string.h>
-#include <nds.h>
-//#include <nds/jtypes.h>
-#include <nds/ndstypes.h>
-#include "io_sd_card.h"
-#include "io_x9_card.h"
+#include "typedefsTGDS.h"
+#include "io_sd_card.dldi.h"
+#include "io_x9_card.dldi.h"
 //#include "io_sd_common.h"
-#include "io_x9sd.h"
-
-
-
-
-
+#include "io_x9sd.dldi.h"
 
 /*
 bool SDSendCommand6(uint8* response, uint8 command, uint32 data)

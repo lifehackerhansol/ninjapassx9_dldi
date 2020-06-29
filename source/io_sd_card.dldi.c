@@ -24,9 +24,9 @@ freely, subject to the following restrictions:
  3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <nds.h>
-#include "io_x9_card.h"
-#include "io_sd_card.h"
+#include "typedefsTGDS.h"
+#include "io_x9_card.dldi.h"
+#include "io_sd_card.dldi.h"
 
 
 const unsigned int DATA_TIMEOUT    = 10000;

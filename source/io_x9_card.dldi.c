@@ -25,13 +25,10 @@ freely, subject to the following restrictions:
 
 */
 
-
-#include <nds.h>
-#include <nds/dma.h>
-#include <nds/ndstypes.h>
-#include <nds/card.h>
-#include "io_x9_card.h"
-#include "io_x9sd.h"
+#include "typedefsTGDS.h"
+#include "spiTGDS.h"
+#include "io_x9_card.dldi.h"
+#include "io_x9sd.dldi.h"
 
 //#define DO_DEBUG(statements) do { statements; } while(0)               
 #define DO_DEBUG(statements)
@@ -45,7 +42,6 @@ freely, subject to the following restrictions:
 
 void cardWriteCommand(const uint8* command)
 {
-	
 	while(REG_ROMCTRL & CARD_BUSY){	
 		if(REG_ROMCTRL & CARD_DATA_READY){
 			break;
