@@ -174,3 +174,13 @@ $(BINSTRIP_RULE_7): $(ELF_ARM7)
 clean:
 	-@echo 'cleanup $(DIR_ARM7)'
 	-@rm -fr $(BINSTRIP_RULE_7)	$(MAPFILE)	$(BUILD)	$(BINSTRIP_RULE_7).map
+	
+rebase:
+	git reset --hard HEAD
+	git clean -f -d
+	git pull
+	
+commitChanges:
+	-@git commit -a	-m '$(COMMITMSG)'
+	-@git push origin HEAD
+	
