@@ -1,28 +1,35 @@
 X9SD DLDI Driver
 Hardware driver to facilitate SD card access for Ninjapass X9
 
+Version: 0.5:
+06/30/2020
+- Remove static DLDI allocation, all compiled objects are ordered the way they should: dynamically, while filling DLDI binary to 16K
+
+
 Version: 0.4
 06/29/2020
 
-Compile with dkARM r43: Makefile_dkarm (rename it to Makefile) -> make clean -> make
-
-Compile with TGDS 1.5: Makefile -> make clean -> make
+- Compile with dkARM r43: Makefile_dkarm (rename it to Makefile) -> make clean -> make
+- Compile with TGDS 1.5: Makefile -> make clean -> make
 
 Changes:
 
 Version: 0.3
 09/16/2019
 
-- remove DMA dependency, use a faster ARM memcpy. Improves stability.
-- a bit faster performing writes to SD / less resource intensive
-- fix/remove warnings
+- Remove DMA dependency, use a faster ARM memcpy. Improves stability.
+- A bit faster performing writes to SD / less resource intensive
+- Fix/remove warnings
 
 
 Version: 0.2
 09/23/2016
-coto: fixed proper DLDI support for most if not all LIBNDS homebrew, everything I have tried works
+- Fixed proper DLDI support for most if not all LIBNDS homebrew, everything I have tried works
 
 
+Coto.
+
+-
 
 Version: 0.1
 Copyright (C) 2007 by CJ Bell

@@ -58,9 +58,6 @@
 	.align
 	.pool
 
-dldi_data_end:
-.space (13240) - (dldi_data_end - _start)		@ Fill to 16KiB
-
 _dldi_end:
 	.end
 @---------------------------------------------------------------------------------

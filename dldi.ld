@@ -8,7 +8,7 @@ MEMORY {
 		the patcher / linker to find all shifted addresses within each section.
 		Changed sections are: glue_7, got
 	*/
-	ddmem	: ORIGIN = 0xBF800000, LENGTH = 32K		
+	ddmem	: ORIGIN = 0xBF800000, LENGTH = 16K		
 }
 
 
@@ -18,23 +18,18 @@ SECTIONS
 	{
 		__text_start = . ;
 		KEEP (*(.init))
-		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-	} >ddmem = 0xff
-
-	.text :   /* ALIGN (4): */
-	{
-		*(.text.*)
-		*(.stub)
-		/* .gnu.warning sections are handled specially by elf32.em.  */
-		*(.gnu.warning)
-		*(.gnu.linkonce.t*)
-		__glue_start = ABSOLUTE(.);
-		*(.glue_7)
-		*(.glue_7t)
+		*source/*.o (.text .text*) 
+		*source/*.o (.stub .stub* ) 
+		*source/*.o (.gnu.warning .gnu.warning* ) 
+		*source/*.o (.gnu.linkonce.t .gnu.linkonce.t* ) 
+		
+ 		__glue_start = ABSOLUTE(.);
+		*source/*.o (.glue_7 .glue_7* )
+		*source/*.o (.glue_7t .glue_7t* )
 		__glue_end = ABSOLUTE(.);
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 	} >ddmem = 0xff
-
+	
 	.fini           :
 	{
 		KEEP (*(.fini))
@@ -151,7 +146,15 @@ SECTIONS
 	_end = . ;
 	__end__ = . ;
 	PROVIDE (end = _end);
-
+	
+	.fill :
+	{
+	  	FILL(0xC0FEEEEE);
+	  	. = ORIGIN(ddmem) + LENGTH(ddmem) - 1;
+	  	BYTE(0xAA)
+	   	FILL_END = .;
+	} > ddmem
+	
 	/* Stabs debugging sections.  */
 	.stab 0 : { *(.stab) }
 	.stabstr 0 : { *(.stabstr) }
