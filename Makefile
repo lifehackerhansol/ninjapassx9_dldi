@@ -22,11 +22,8 @@
 export SOURCE_MAKEFILE7 = default
 export SOURCE_MAKEFILE9 = default
 
-#Non FPIC Code: Use Makefiles from either TGDS, or custom
-#FPIC code is always default TGDS Makefile
-
 #Shared
-include $(DEFAULT_GCC_PATH)Makefile.basenewlib
+include $(DEFAULT_GCC_PATH_WIN)/Makefile.basenewlib
 
 #Custom
 # Project Specific
@@ -42,8 +39,8 @@ export DIR_ARM7 = arm7
 export BUILD_ARM7	=	build
 export DIR_ARM9 = 
 export BUILD_ARM9	=	
-export ELF_ARM7 = arm7.elf
-export ELF_ARM9 = arm9.elf
+export ELF_ARM7 = ./build/arm7.elf
+export ELF_ARM9 = ./build/arm9.elf
 export NONSTRIPELF_ARM7 = arm7-nonstripped.elf
 export NONSTRIPELF_ARM9 = arm9-nonstripped.elf
 
