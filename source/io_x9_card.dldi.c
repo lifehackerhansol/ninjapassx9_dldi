@@ -25,8 +25,7 @@ freely, subject to the following restrictions:
 
 */
 
-#include "typedefsTGDS.h"
-#include "spiTGDS.h"
+#include <nds/ndstypes.h>
 #include "io_x9_card.dldi.h"
 #include "io_x9sd.dldi.h"
 
@@ -55,7 +54,7 @@ void cardWriteCommand(const uint8* command)
 	
 	int index;
 	for (index = 0; index < 8; index++) {
-		CARD_COMMAND[7-index] = command[index];
+		REG_CARD_COMMAND[7-index] = command[index];
 	}
 }
 
@@ -71,7 +70,7 @@ void X9CardPolledWrite(uint32 flags, const uint32* buffer, const uint8* command)
     do
     {
         if(REG_ROMCTRL & CARD_DATA_READY)
-		CARD_DATA_RD = *buffer++;
+		REG_CARD_DATA_RD = *buffer++;
 		
     } 
 	while(REG_ROMCTRL & CARD_BUSY);
@@ -111,7 +110,7 @@ void cardPolledTransfer(uint32 flags, uint32* dest,uint32 length, const uint8* c
         //if(CARD_CR2 & CARD_DATA_READY)
         if (REG_ROMCTRL & CARD_DATA_READY)
 		{
-            u32 value = CARD_DATA_RD;
+            u32 value = REG_CARD_DATA_RD;
             if(dest < end)
                 *dest = value;
             ++dest;                                                                               

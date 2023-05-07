@@ -30,7 +30,7 @@ freely, subject to the following restrictions:
 
 //#include <stdio.h>
 //#include <string.h>
-#include "typedefsTGDS.h"
+#include <nds/ndstypes.h>
 #include "io_sd_card.dldi.h"
 #include "io_x9_card.dldi.h"
 //#include "io_sd_common.h"
